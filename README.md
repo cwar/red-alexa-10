@@ -5,9 +5,9 @@ Tutorial and source code to set up a raspberry pi to control x10 devices using n
 
 ### Devices Used
 
-Amazon Echo Dot
-Raspberry Pi 3 Model B
-CM19A X10 RF Transceiver
-X10 TM751 Wireless Transceiver Module
-X10 UM506 Universal Module
-Open Sesame Door Opener w/ Remote
+* Amazon Echo Dot
+* Raspberry Pi 3 Model B
+* CM19A X10 RF Transceiver
+* X10 TM751 Wireless Transceiver Module
+* X10 UM506 Universal Module
+* Open Sesame Door Opener w/ Remote
