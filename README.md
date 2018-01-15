@@ -1,6 +1,6 @@
 # red-alexa-10
 
-Tutorial and source code to set up a raspberry pi to control x10 devices using node-red. Specifically, this to turn on/off a lamp and open a door... but these concepts are an easy way to jump start sending x10 signals with Amazon Alexa and a Raspberry Pi.
+Tutorial and source code to set up a raspberry pi to control x10 devices using node-red. Specifically, this to turn on/off a lamp and open a door... but these concepts are an easy way to jump start sending x10 signals with Amazon Alexa and a Raspberry Pi. This will give you a high level over view of Raspberry Pi, X10 and Node-Red.
 
 ## Table Of Contents
   - [Prepartion](#prepartion)
@@ -97,3 +97,26 @@ To deploy the Node-RED flow, just click the deploy button in the top right of th
 
 #### Opening the door
 
+Now that we have a flow containing nodes that represent Alexa recognized devices, time to make them do stuff.
+
+The simplest of our two devices we are setting up is the door. We just need to send a signal to the door to send it into action. To do this, we just need for our Alexa node to generate a message that execs the python driver like we tested before.
+
+To execute this with node red, we will be using the Exec node. Drag an Exec node onto your flow and double click to edit the node.
+
+Let's say you have your door remote set to house code ```a``` and device number ```2```. The driver command to relay to the door would be ```python pycm19a.py +a2```. Using a relative path, if you cloned this repo in a folder called ```projects``` would be ```~/projects/x10/red-alexa-10```. So in the Command field of the Exec node edit screen, putting it all togther, should be ```python ~/projects/x10/red-alexa-10/pycm19a.py +a2```. Remember, + turns on a device and since we really only care about relaying any sort of signal this will work for us (even if it is kind of a cheat, we'll see how to use data from the message from the Alexa node to perform specific actions in the next section).
+
+Link the two nodes together (output from the alexa-local door node to the input of the Exec node you just created) and once you've deployed you will have all the functionality required to open the door with Alexa.
+
+#### Switching the light on and off
+
+Understanding the basics of a Node-Red flow and having one completed, we can create another flow (either a second device on the same flow tab or you can create a new flow in a new tab) for the lamp.
+
+When you ask alexa to turn an alexa-local device on or off, that is included in the msg that many node-red nodes use to pass along information. The information is usually included in the payload (```msg.payload```) but it can be other places as well.
+
+In this simple example, the payload will be a string that is either ```on``` or ```off```. Using that data, we will have node-red make a decision as to which argument to send to the house code/device number for the lamp. We will assume that the lamp is on ```a1```.
+
+To make the decision for us, we will use a Switch node. This node allows you to route messages based on their property values. Edit the node, leave the property set to ```msg.payload``` and define two rules. For both rules we are going to see if ```msg.payload``` is equal (```==```) to the string ```on``` or ```off```. In the switch node you can compare to many different data types, but since we are comparing strings you can leave the data type dropdown as it defaults to string.
+
+To the right of each rule you will see an arrow pointing to a number. This represents which port that the message will be routed to. The ports are also represented on the node-red flow on the right sides of the node. You can link the port to any input node of any other port.
+
+So create two new Exec nodes as before. This time, create one Exec node that turns the light on (```python ~/projects/x10/red-alexa-10/pycm19a.py +a1```) and one that turns the light off (```python ~/projects/x10/red-alexa-10/pycm19a.py -a1```). Simply connect the output ports on the switch route with the appropriate exec node, deploy, and you can control the lights!
